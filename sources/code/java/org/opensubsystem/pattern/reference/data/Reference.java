@@ -40,7 +40,7 @@ public interface Reference
     *                                  additional classifier allows to distinguish
     *                                  among them
     * @return Long - id of the referenced object or null if there is no reference
-    * @throws FSMException - an error has occurred
+    * @throws OSSException - an error has occurred
     */
    Long getReferenceId(
       int    iReferenceDataType,
