@@ -35,7 +35,7 @@ public interface VersionedDataObject extends ModifiableDataObject
    /**
     * This is the first version number for any versionable data object.
     */
-   int FIRST_VERSION_NUMBER = 1;
+   long FIRST_VERSION_NUMBER = 1;
    
    // Logic ////////////////////////////////////////////////////////////////////
 
@@ -74,16 +74,16 @@ public interface VersionedDataObject extends ModifiableDataObject
    /**
     * Get the actual version number of this data object.
     * 
-    * @return int
+    * @return long
     */
-   public int getVersion();
+   public long getVersion();
    
    /**
     * Set the actual version number of this data object.
     * 
-    * @param version - version of this object
+    * @param lVersion - version of this object
     */
    public void setVersion(
-      int version
+      long lVersion
    );
 }
