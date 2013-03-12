@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-package org.opensubsystem.pattern.reference.data;
+package org.opensubsystems.pattern.reference.data;
 
 import org.opensubsystems.core.error.OSSException;
 
