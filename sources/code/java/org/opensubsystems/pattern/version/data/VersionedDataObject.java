@@ -24,7 +24,9 @@ import org.opensubsystems.core.data.ModifiableDataObject;
 /**
  * Base interface for all data objects, which can be versioned and therefore have 
  * to track the current version, if they are tip and the base version of, which 
- * this is a new version.
+ * this is a new version. Versioning of data objects implies modification since 
+ * without modification there is no need to version the data object and therefore 
+ * this interface extends ModifiableDataObject.
  * 
  * @author OpenSubsystems
  */
