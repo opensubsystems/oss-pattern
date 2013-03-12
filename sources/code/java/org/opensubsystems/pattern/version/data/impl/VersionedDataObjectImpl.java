@@ -63,7 +63,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
     * Data object version number. This is the actual version number of this data
     * object.
     */
-   protected int m_iVersion;
+   protected long m_lVersion;
    
    // Constructors /////////////////////////////////////////////////////////////
    
@@ -91,7 +91,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
     * @param lDomainId - domain this data object belongs to
     * @param lBaseVersionId - data object base version ID
     * @param bTip - flag if this data object is TIP
-    * @param iVersion - version number of this data object
+    * @param lVersion - version number of this data object
     * @param creationTimestamp - timestamp when the data object was created.
     * @param modificationTimestamp - timestamp when the data object was last 
     *                                time modified.
@@ -103,7 +103,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
       long                  lDomainId,
       long                  lBaseVersionId,
       boolean               bTip,
-      int                   iVersion,
+      long                  lVersion,
       Timestamp             creationTimestamp, 
       Timestamp             modificationTimestamp
    ) throws OSSException
@@ -113,7 +113,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
       
       m_lBaseVersionId = lBaseVersionId;
       m_bTip = bTip;
-      m_iVersion = iVersion;
+      m_lVersion = lVersion;
    }
    
    // Logic ////////////////////////////////////////////////////////////////////
@@ -162,9 +162,9 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
     * {@inheritDoc}
     */
    @Override
-   public int getVersion()
+   public long getVersion()
    {
-      return m_iVersion;
+      return m_lVersion;
    }
    
    /**
@@ -172,10 +172,27 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
     */
    @Override
    public void setVersion(
-      int iVersion
+      long iVersion
    )
    {
-      m_iVersion = iVersion;
+      m_lVersion = iVersion;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void toString(
+      StringBuilder sb,
+      int           ind
+   )
+   {
+      append(sb, ind + 0, "VersionedDataObjectImpl[");
+      append(sb, ind + 1, "m_lBaseVersionId = ", m_lBaseVersionId);
+      append(sb, ind + 1, "m_bTip = ", m_bTip);
+      append(sb, ind + 1, "m_lVersion = ", m_lVersion);
+      super.toString(sb, ind + 1);
+      append(sb, ind + 0, "]");
    }
 
    /**
@@ -198,7 +215,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
          helper = (VersionedDataObject) oObject;
          bReturn = (m_bTip == helper.isTip())
                    && (m_lBaseVersionId == helper.getBaseVersionId())
-                   && (m_iVersion == helper.getVersion())
+                   && (m_lVersion == helper.getVersion())
                    && (super.equals(oObject));
       }
       
@@ -214,7 +231,7 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
       int iResult = HashCodeUtils.SEED;
       iResult = HashCodeUtils.hash(iResult, m_bTip);
       iResult = HashCodeUtils.hash(iResult, m_lBaseVersionId);
-      iResult = HashCodeUtils.hash(iResult, m_iVersion);
+      iResult = HashCodeUtils.hash(iResult, m_lVersion);
       iResult = HashCodeUtils.hash(iResult, super.hashCode());
       return iResult;
    }
@@ -226,33 +243,33 @@ public abstract class VersionedDataObjectImpl extends ModifiableDataObjectImpl
     * object in case it needs to be reused or reconstructed (e.g. when rollback
     * is issued).
     * 
-    * @param iId - id of this data object
+    * @param lId - id of this data object
     * @param clsDataDescriptor - class identifying data descriptor for the object
-    * @param iDomainId - domain this data object belongs to
-    * @param iBaseVersionId - data object base version ID
+    * @param lDomainId - domain this data object belongs to
+    * @param lBaseVersionId - data object base version ID
     * @param bTip - flag if this data object is TIP
-    * @param iVersion - version number of this data object
+    * @param lVersion - version number of this data object
     * @param creationTimestamp - timestamp when the data object was created.
     * @param modificationTimestamp - timestamp when the data object was last 
     *                                time modified.
     * @throws OSSException - an error has occurred
     */
    protected void restore(
-      int                   iId,
+      long                  lId,
       Class<DataDescriptor> clsDataDescriptor,
-      int                   iDomainId,
-      int                   iBaseVersionId,
+      long                  lDomainId,
+      long                  lBaseVersionId,
       boolean               bTip,
-      int                   iVersion,
+      long                  lVersion,
       Timestamp             creationTimestamp, 
       Timestamp             modificationTimestamp
    ) throws OSSException
    {
-      super.restore(iId, clsDataDescriptor, iDomainId, creationTimestamp, 
+      super.restore(lId, clsDataDescriptor, lDomainId, creationTimestamp, 
                     modificationTimestamp);
       
-      m_lBaseVersionId = iBaseVersionId;
+      m_lBaseVersionId = lBaseVersionId;
       m_bTip = bTip;
-      m_iVersion = iVersion;
+      m_lVersion = lVersion;
    }
 }
