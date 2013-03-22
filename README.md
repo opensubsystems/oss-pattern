@@ -1,4 +1,0 @@
-oss-pattern
-===========
-
-OpenSubsystems Patterns
