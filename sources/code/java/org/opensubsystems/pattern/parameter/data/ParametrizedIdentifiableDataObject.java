@@ -19,6 +19,7 @@
 
 package org.opensubsystems.pattern.parameter.data;
 
+import java.util.Collection;
 import java.util.Map;
 import org.opensubsystems.core.data.IdentifiableDataObject;
 
@@ -35,7 +36,17 @@ public interface ParametrizedIdentifiableDataObject extends IdentifiableDataObje
      * the behavior of the object.
      * 
      * @return Map<String, ? extends Parameter> - key is the parameter name, 
-     *                                            value is the parameter itself
+     *                                            value is the parameter itself.
+     *                                            Can be null.
      */
-    Map<String, ? extends Parameter>getParameters();
+    Map<String, ? extends Parameter>getParameterMap();
+
+   /**
+    * Get collection of the parameters, values of which are used to further 
+    * characterize the behavior of the object.
+    * 
+    * @return Collection<? extends Parameter> - collection of parameters. Can be 
+    *                                           null.
+    */
+   Collection<? extends Parameter>getParameterCollection();
 }
