@@ -33,7 +33,8 @@ public interface Parameter<T> extends IdentifiableDataObject
     /**
      * Get values of the parameter.
      * 
-     * @return List<T>
+     * @return List<T> - list of values associated with the given parameter name. 
+     *                   Can be null if there are no values.
      */
     List<T> getValues();
 }
