@@ -116,6 +116,21 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     * {@inheritDoc}
     */
    @Override
+   public void toString(
+      StringBuilder sb,
+      int           ind
+   )
+   {
+      append(sb, ind + 0, "ParametrizedIdentifiableDataObjectImpl[");
+      append(sb, ind + 1, "m_mpParams = ", m_mpParams);
+      super.toString(sb, ind + 1);
+      append(sb, ind + 0, "]");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public boolean isSame(
       Object oObject
    )
