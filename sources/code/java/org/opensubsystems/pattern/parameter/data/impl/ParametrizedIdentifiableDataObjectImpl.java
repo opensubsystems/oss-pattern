@@ -21,6 +21,7 @@ package org.opensubsystems.pattern.parameter.data.impl;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.opensubsystems.core.data.DataDescriptor;
@@ -167,7 +168,8 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
    public Collection<? extends Parameter>getParameterCollection()
    {
       
-      return (m_mpParams != null) ? m_mpParams.values() : null;
+      return (m_mpParams != null) ? Collections.unmodifiableCollection(m_mpParams.values()) 
+                                  : null;
    }
 
    // Helper methods ///////////////////////////////////////////////////////////
