@@ -35,18 +35,16 @@ public interface ParametrizedIdentifiableDataObject extends IdentifiableDataObje
      * Get parameters, values of which are used to further characterize 
      * the behavior of the object.
      * 
-     * @return Map<String, ? extends Parameter> - key is the parameter name, 
-     *                                            value is the parameter itself.
-     *                                            Can be null.
+     * @return Map<String, Parameter> - key is the parameter name, value is the 
+     *                                  parameter itself. Can be null.
      */
-    Map<String, ? extends Parameter>getParameterMap();
+    Map<String, Parameter>getParametersByName();
 
    /**
     * Get collection of the parameters, values of which are used to further 
     * characterize the behavior of the object.
     * 
-    * @return Collection<? extends Parameter> - collection of parameters. Can be 
-    *                                           null.
+    * @return Collection<Parameter> - collection of parameters. Can be null.
     */
-   Collection<? extends Parameter>getParameterCollection();
+   Collection<Parameter> getParameters();
 }
