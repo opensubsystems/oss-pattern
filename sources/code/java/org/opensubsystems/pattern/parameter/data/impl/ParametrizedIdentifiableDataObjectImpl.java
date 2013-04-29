@@ -29,6 +29,7 @@ import org.opensubsystems.core.data.DataObject;
 import org.opensubsystems.core.data.IdentifiableDataObject;
 import org.opensubsystems.core.data.impl.IdentifiableDataObjectImpl;
 import org.opensubsystems.core.error.OSSException;
+import org.opensubsystems.core.util.DataObjectUtils;
 import org.opensubsystems.core.util.HashCodeUtils;
 import org.opensubsystems.pattern.parameter.data.Parameter;
 import org.opensubsystems.pattern.parameter.data.ParametrizedIdentifiableDataObject;
@@ -51,7 +52,7 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     /**
      * Parameters associated with this data object keyed by the parameter name. 
      */
-    protected Map<String, ? extends Parameter> m_mpParams;
+    protected Map<String, Parameter> m_mpParamsByName;
     
     // Constructors ////////////////////////////////////////////////////////////
     
@@ -62,20 +63,19 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     * @param lDomainId - domain this data object belongs to
     * @param strName - name of the data object
     * @param strDescription - description of the data object
-    * @param mpParams - parameters associated with this data object keyed by the 
-    *                   parameter name. 
+    * @param colParams - parameters associated with this data object 
     * @throws OSSException - an error has occurred
     */
    public ParametrizedIdentifiableDataObjectImpl(
-      Class<DataDescriptor>            clsDataDescriptor,
-      long                             lDomainId,
-      String                           strName,
-      String                           strDescription,
-      Map<String, ? extends Parameter> mpParams
+      Class<DataDescriptor> clsDataDescriptor,
+      long                  lDomainId,
+      String                strName,
+      String                strDescription,
+      Collection<Parameter> colParams
    ) throws OSSException
    {
       this(DataObject.NEW_ID, clsDataDescriptor, lDomainId, null, null, strName, 
-           strDescription, mpParams);
+           strDescription, colParams);
    }
 
    /**
@@ -89,25 +89,24 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     *                                time modified.
     * @param strName - name of the data object
     * @param strDescription - description of the data object
-    * @param mpParams - parameters associated with this data object keyed by the 
-    *                   parameter name. 
+    * @param colParams - parameters associated with this data object 
     * @throws OSSException - an error has occurred
     */
    public ParametrizedIdentifiableDataObjectImpl(
-      long                             lId,
-      Class<DataDescriptor>            clsDataDescriptor,
-      long                             lDomainId,
-      Timestamp                        creationTimestamp, 
-      Timestamp                        modificationTimestamp,
-      String                           strName,
-      String                           strDescription,
-      Map<String, ? extends Parameter> mpParams
+      long                  lId,
+      Class<DataDescriptor> clsDataDescriptor,
+      long                  lDomainId,
+      Timestamp             creationTimestamp, 
+      Timestamp             modificationTimestamp,
+      String                strName,
+      String                strDescription,
+      Collection<Parameter> colParams
    ) throws OSSException
    {
       super(lId, clsDataDescriptor, lDomainId, creationTimestamp, 
             modificationTimestamp, strName, strDescription);
       
-      m_mpParams = mpParams;
+      m_mpParamsByName = DataObjectUtils.convertCollectionToMapByName(colParams);
    }
     
    // Logic ////////////////////////////////////////////////////////////////////
@@ -122,7 +121,7 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
    )
    {
       append(sb, ind + 0, "ParametrizedIdentifiableDataObjectImpl[");
-      append(sb, ind + 1, "m_mpParams = ", m_mpParams);
+      append(sb, ind + 1, "m_mpParams = ", m_mpParamsByName);
       super.toString(sb, ind + 1);
       append(sb, ind + 0, "]");
    }
@@ -145,8 +144,8 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
       else if ((oObject != null) && (oObject instanceof IdentifiableDataObject))
       {
          helper = (ParametrizedIdentifiableDataObject) oObject;
-         bReturn = CollectionUtils.isEqualCollection(getParameterCollection(), 
-                                                     helper.getParameterCollection()) 
+         bReturn = CollectionUtils.isEqualCollection(getParameters(), 
+                                                     helper.getParameters()) 
                    && (super.isSame(oObject));
       }
 
@@ -161,7 +160,7 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
    {
       int iResult = HashCodeUtils.SEED;
  
-      iResult = HashCodeUtils.hash(iResult, m_mpParams);
+      iResult = HashCodeUtils.hash(iResult, m_mpParamsByName);
       iResult = HashCodeUtils.hash(iResult, super.hashCode());
       
       return iResult;
@@ -171,20 +170,20 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     * {@inheritDoc}
     */
    @Override
-   public Map<String, ? extends Parameter>getParameterMap()
+   public Map<String, Parameter>getParametersByName()
    {
-      return m_mpParams;
+      return m_mpParamsByName;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public Collection<? extends Parameter>getParameterCollection()
+   public Collection<Parameter>getParameters()
    {
-      
-      return (m_mpParams != null) ? Collections.unmodifiableCollection(m_mpParams.values()) 
-                                  : null;
+      return (m_mpParamsByName != null) 
+                ? Collections.unmodifiableCollection(m_mpParamsByName.values()) 
+                : null;
    }
 
    // Helper methods ///////////////////////////////////////////////////////////
@@ -202,24 +201,23 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     *                                time modified.
     * @param strName - name of the data object
     * @param strDescription - description of the data object
-    * @param mpParams - parameters associated with this data object keyed by the 
-    *                   parameter name. 
+    * @param colParams - parameters associated with this data object 
     * @throws OSSException - an error has occurred
     */
    protected void restore(
-      long                             lId,
-      Class<DataDescriptor>            clsDataDescriptor,
-      long                             lDomainId,
-      Timestamp                        creationTimestamp, 
-      Timestamp                        modificationTimestamp,
-      String                           strName,
-      String                           strDescription,
-      Map<String, ? extends Parameter> mpParams
+      long                  lId,
+      Class<DataDescriptor> clsDataDescriptor,
+      long                  lDomainId,
+      Timestamp             creationTimestamp, 
+      Timestamp             modificationTimestamp,
+      String                strName,
+      String                strDescription,
+      Collection<Parameter> colParams
    ) throws OSSException
    {
       super.restore(lId, clsDataDescriptor, lDomainId, creationTimestamp, 
                     modificationTimestamp, strName, strDescription);
       
-      m_mpParams = mpParams;
+      m_mpParamsByName = DataObjectUtils.convertCollectionToMapByName(colParams);;
    }
 }
