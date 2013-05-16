@@ -23,6 +23,8 @@
         </references>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>hostname</word>
+            <word>parametrize</word>
+            <word>parametrized</word>
             <word>reacquired</word>
             <word>versioned</word>
         </spellchecker-wordlist>
