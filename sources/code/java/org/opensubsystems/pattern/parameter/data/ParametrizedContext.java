@@ -19,6 +19,7 @@
 
 package org.opensubsystems.pattern.parameter.data;
 
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -29,6 +30,12 @@ import java.util.Stack;
  */
 public interface ParametrizedContext 
 {
+   /**
+    * Get common cache used by the clients of this context to store name value 
+    * pairs.
+    */
+   Map<String, Object> getCache();
+           
    /**
     * Get the collection of objects that can parametrize processing using this 
     * context.

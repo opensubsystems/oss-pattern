@@ -19,6 +19,8 @@
 
 package org.opensubsystems.pattern.parameter.data.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import org.opensubsystems.core.util.OSSObject;
 import org.opensubsystems.pattern.parameter.data.ParametrizedContext;
@@ -39,6 +41,11 @@ public class ParametrizedContextImpl extends OSSObject
     */
    protected Stack<ParametrizedObject> m_skParamContext;
    
+   /**
+    * Common cache used by the clients of this context to store name value pairs.
+    */
+   protected Map<String, Object> m_mpCache;
+   
    // Constructors /////////////////////////////////////////////////////////////
    
    /**
@@ -50,6 +57,7 @@ public class ParametrizedContextImpl extends OSSObject
       super();
       
       m_skParamContext = new Stack<>();
+      m_mpCache = new HashMap<>();
    }
 
    // Logic ////////////////////////////////////////////////////////////////////
@@ -65,6 +73,7 @@ public class ParametrizedContextImpl extends OSSObject
    {
       append(sb, ind + 0, "ParametrizedContextImpl[");
       append(sb, ind + 1, "m_skParamContext = ", m_skParamContext);
+      append(sb, ind + 1, "m_mpCache = ", m_mpCache);
       super.toString(sb, ind + 1);
       append(sb, ind + 0, "]");
    }
@@ -96,5 +105,14 @@ public class ParametrizedContextImpl extends OSSObject
    public ParametrizedObject popParamContext()
    {
       return m_skParamContext.pop();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Map<String, Object> getCache()
+   {
+      return m_mpCache;
    }
 }
