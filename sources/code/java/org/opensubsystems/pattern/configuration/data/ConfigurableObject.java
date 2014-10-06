@@ -177,9 +177,9 @@ public class ConfigurableObject extends OSSObject
                // Since we are modifying the value, create copy of the parameter
                Parameter<String> copy;
 
-               copy = new ParameterImpl(DataDescriptor.NO_DATA_DESCRIPTOR_CLASS,
-                                        DataObject.NEW_ID,
-                                        temp.getName(), null, strResolvedValue);
+               copy = new ParameterImpl<>(DataDescriptor.NO_DATA_DESCRIPTOR_CLASS,
+                                          DataObject.NEW_ID,
+                                          temp.getName(), null, strResolvedValue);
                temp = copy;
             }
          }
@@ -264,9 +264,9 @@ public class ConfigurableObject extends OSSObject
          {
             // If the value contains any variables, resolve them to an actual
             // value before creating the param
-            temp = new ParameterImpl(DataDescriptor.NO_DATA_DESCRIPTOR_CLASS,
-                                     DataObject.NEW_ID,
-                                     strName, null, strDefaultValue);
+            temp = new ParameterImpl<>(DataDescriptor.NO_DATA_DESCRIPTOR_CLASS,
+                                       DataObject.NEW_ID,
+                                       strName, null, strDefaultValue);
          }
       }
       
