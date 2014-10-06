@@ -30,11 +30,41 @@ import org.opensubsystems.core.data.IdentifiableDataObject;
  */
 public interface Parameter<T> extends IdentifiableDataObject
 {
-    /**
-     * Get values of the parameter.
-     * 
-     * @return List<T> - list of values associated with the given parameter name. 
-     *                   Can be null if there are no values.
-     */
-    List<T> getValues();
+   /**
+    * Get values of the parameter.
+    * 
+    * @return List<T> - list of values associated with the given parameter name. 
+    *                   Can be null if there are no values.
+    */
+   List<T> getValues();
+
+   /**
+    * Set values of the parameter.
+    * 
+    * @param lstValues - list of values associated with the given parameter name. 
+    *                    Can be null if there are no values.
+    */
+   void setValues(List<T> lstValues);
+
+   /**
+    * Set value of the parameter.
+    * 
+    * @param value - single value associated with the given parameter name. 
+    *                Can be null if there are no values.
+    */
+   void setValue(T value);
+
+   /**
+    * Test if parameter has any value.
+    * 
+    * @return boolean
+    */
+   boolean hasAnyValue(); 
+   
+   /**
+    * Test if parameter has multiple values.
+    * 
+    * @return boolean
+    */
+   boolean hasMultipleValues(); 
 }

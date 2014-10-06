@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 OpenSubsystems.com/net/org and its owners. All rights reserved.
+ * Copyright (C) 2013 - 2014 OpenSubsystems.com/net/org and its owners. All rights reserved.
  * 
  * This file is part of OpenSubsystems.
  *
@@ -20,6 +20,7 @@
 package org.opensubsystems.pattern.parameter.data.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
@@ -71,6 +72,28 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
    }
 
    /**
+    * Simple constructor creating new data object in particular domain.
+    * 
+    * @param clsDataDescriptor - class identifying data descriptor for the object
+    * @param lDomainId - domain this data object belongs to
+    * @param strName - name of the data object
+    * @param strDescription - description of the data object
+    * @param value - value associated with the parameter name
+    * @throws OSSException - an error has occurred
+    */
+   public ParameterImpl(
+      Class<DataDescriptor> clsDataDescriptor,
+      long                  lDomainId,
+      String                strName,
+      String                strDescription,
+      T                     value
+   ) throws OSSException
+   {
+      this(DataObject.NEW_ID, clsDataDescriptor, lDomainId, null, null, strName, 
+           strDescription, value);
+   }
+
+   /**
     * Full constructor.
     * 
     * @param lId - id of this data object
@@ -99,6 +122,37 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
             modificationTimestamp, strName, strDescription);
       
       m_lstValues = lstValues;
+   }
+    
+   /**
+    * Full constructor for parameters with single value.
+    * 
+    * @param lId - id of this data object
+    * @param clsDataDescriptor - class identifying data descriptor for the object
+    * @param lDomainId - domain this data object belongs to
+    * @param creationTimestamp - timestamp when the data object was created.
+    * @param modificationTimestamp - timestamp when the data object was last 
+    *                                time modified.
+    * @param strName - name of the data object
+    * @param strDescription - description of the data object
+    * @param value - value associated with the parameter name
+    * @throws OSSException - an error has occurred
+    */
+   public ParameterImpl(
+      long                  lId,
+      Class<DataDescriptor> clsDataDescriptor,
+      long                  lDomainId,
+      Timestamp             creationTimestamp, 
+      Timestamp             modificationTimestamp,
+      String                strName,
+      String                strDescription,
+      T                     value
+   ) throws OSSException
+   {
+      super(lId, clsDataDescriptor, lDomainId, creationTimestamp, 
+            modificationTimestamp, strName, strDescription);
+      
+      setValue(value);
    }
     
    // Logic ////////////////////////////////////////////////////////////////////
@@ -164,6 +218,44 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
    public List<T> getValues() 
    {
       return Collections.unmodifiableList(m_lstValues);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setValues(List<T> lstValues) 
+   {
+      m_lstValues = lstValues;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setValue(T value) 
+   {
+      List<T> lstValues = new ArrayList<>(1);
+      lstValues.add(value);
+      setValues(lstValues);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean hasAnyValue() 
+   {
+      return (m_lstValues != null) && (m_lstValues.size() > 0);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean hasMultipleValues() 
+   {
+      return (m_lstValues != null) && (m_lstValues.size() > 1);
    }
 
    // Helper methods ///////////////////////////////////////////////////////////
