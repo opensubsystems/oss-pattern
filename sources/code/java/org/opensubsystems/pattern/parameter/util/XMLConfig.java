@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-package org.opensubsystems.pattern.configuration.util;
+package org.opensubsystems.pattern.parameter.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.opensubsystems.core.util.FileUtils;
 import org.opensubsystems.core.util.Log;
 import org.opensubsystems.core.util.OSSObject;
 import org.opensubsystems.core.util.ResourceUtils;
-import org.opensubsystems.pattern.configuration.data.ConfigurableObject;
+import org.opensubsystems.pattern.parameter.data.impl.ConfigurationImpl;
 import org.xml.sax.SAXException;
 
 /**
@@ -94,10 +94,10 @@ public class XMLConfig extends OSSObject
     * @return ConfigurableObject 
     * @throws OSSConfigException - an error has occurred
     */
-   public static ConfigurableObject read(
+   public static ConfigurationImpl read(
    ) throws OSSConfigException
    {
-      ConfigurableObject  configData = null;
+      ConfigurationImpl  configData = null;
       File                configFile = null;
       URL                 configURL = null;
       
@@ -164,7 +164,7 @@ public class XMLConfig extends OSSObject
     * @return ConfigurableObject 
     * @throws OSSConfigException - an error has occurred
     */
-   public static ConfigurableObject read(
+   public static ConfigurationImpl read(
       String strfileConfig
    ) throws OSSConfigException
    {
@@ -178,13 +178,13 @@ public class XMLConfig extends OSSObject
     * @return ConfigurableObject 
     * @throws OSSConfigException - an error has occurred
     */
-   public static ConfigurableObject read(
+   public static ConfigurationImpl read(
       File fileConfig
    ) throws OSSConfigException
    {
       Digester digester = DigesterLoader.newLoader(
                              new ConfigurationRulesModule()).newDigester();
-      ConfigurableObject config = null;
+      ConfigurationImpl config = null;
       
       try
       {
@@ -209,13 +209,13 @@ public class XMLConfig extends OSSObject
     * @return ConfigurableObject 
     * @throws OSSConfigException - an error has occurred
     */
-   public static ConfigurableObject read(
+   public static ConfigurationImpl read(
       InputStream streamConfig
    ) throws OSSConfigException
    {
       Digester digester = DigesterLoader.newLoader(
                              new ConfigurationRulesModule()).newDigester();
-      ConfigurableObject config = null;
+      ConfigurationImpl config = null;
       
       try
       {

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-package org.opensubsystems.pattern.configuration.data;
+package org.opensubsystems.pattern.parameter.data.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,20 +29,24 @@ import org.opensubsystems.core.data.DataDescriptor;
 import org.opensubsystems.core.data.DataObject;
 import org.opensubsystems.core.error.OSSConfigException;
 import org.opensubsystems.core.error.OSSException;
+import org.opensubsystems.core.util.HashCodeUtils;
 import org.opensubsystems.core.util.Log;
-import org.opensubsystems.core.util.OSSObject;
+import org.opensubsystems.pattern.parameter.data.Configuration;
 import org.opensubsystems.pattern.parameter.data.Parameter;
-import org.opensubsystems.pattern.parameter.data.impl.ParameterImpl;
 
 /**
- * Class holding configuration parameters and their actual and default values.
+ * Class representing configuration data. The configuration is defined as set of 
+ * configuration parameters and their actual and default values. The default values
+ * are used in case the actual values are not present. Configuration can be used
+ * to determine actual parameter values of other parametrized objects.
  * 
  * This class assumes that each parameter of configuration has only a single 
  * value.
  * 
  * @author bastafidli
  */
-public class ConfigurableObject extends OSSObject
+public class ConfigurationImpl extends    ParametrizedObjectImpl
+                               implements Configuration
 {
    // Constants ////////////////////////////////////////////////////////////////
    
@@ -65,28 +69,25 @@ public class ConfigurableObject extends OSSObject
     * List of all defined configuration parameters where the key is the name of 
     * the configuration parameter and the value is the default value.
     */
-   protected final Map<String, String> m_mpDefaults = new HashMap<>();
-   
-   /**
-    * Collection of parameters keyed by the parameter name.
-    */
-   protected final Map<String, Parameter> m_mpParams = new HashMap<>();
+   protected final Map<String, String> m_mpDefaultValuesByName = new HashMap<>();
    
    // Cached values ////////////////////////////////////////////////////////////
 
    /**
     * Commons logger variable used to log runtime information.
     */
-   private static Logger s_logger = Log.getInstance(ConfigurableObject.class);
+   private static Logger s_logger = Log.getInstance(ConfigurationImpl.class);
 
    // Constructors /////////////////////////////////////////////////////////////
 
    /**
     * Default constructor.
     */
-   public ConfigurableObject(
+   public ConfigurationImpl(
    )
    {
+      super();
+      
       // Do nothing
    }
 
@@ -96,26 +97,62 @@ public class ConfigurableObject extends OSSObject
     * @param config - if not null then the object will be initialized as a copy
     *                 of the specified object
     */
-   protected ConfigurableObject(
-      ConfigurableObject config
+   protected ConfigurationImpl(
+      ConfigurationImpl config
    )
    {
+      super();
+      
       if (config != null)
       {
-         m_mpDefaults.putAll(config.m_mpDefaults);
-         m_mpParams.putAll(config.m_mpParams);
+         m_mpDefaultValuesByName.putAll(config.m_mpDefaultValuesByName);
+         m_mpParamsByName.putAll(config.m_mpParamsByName);
       }
    }
    
    // Logic ////////////////////////////////////////////////////////////////////
    
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void toString(
+      StringBuilder sb,
+      int           ind
+   )
+   {
+      append(sb, ind + 0, "ConfigurationImpl[");
+      append(sb, ind + 1, "m_mpDefaultValuesByName = ", m_mpDefaultValuesByName);
+      super.toString(sb, ind + 1);
+      append(sb, ind + 0, "]");
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode()
+   {
+      int iResult = HashCodeUtils.SEED;
+ 
+      iResult = HashCodeUtils.hash(iResult, m_mpDefaultValuesByName);
+      iResult = HashCodeUtils.hash(iResult, super.hashCode());
+      
+      return iResult;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void addParam(
       Parameter param
    )
    {
       Parameter oldParam;
       
-      oldParam = m_mpParams.put(param.getName(), param);
+      oldParam = m_mpParamsByName.put(param.getName(), param);
       if (oldParam != null)
       {
          s_logger.log(Level.WARNING, "Parameter with name {0} overwrote already"
@@ -125,41 +162,25 @@ public class ConfigurableObject extends OSSObject
    }
 
    /**
-    * Get value of the specified parameter. 
+    * {@inheritDoc}
     * 
-    * NOTE: Every method accessing parameters has to call this method to do so
-    * in order to correctly process the replacement variables.
-    * 
-    * @param strName - name of the configuration parameter to get value for. 
-    *                  The Configuration will first attempt to find value of 
-    *                  strName and if it doesn't find it, it will return default 
-    *                  value.
-    * @return Parameter - value or null if it is not defined and it doesn't have 
-    *                 a default value
-    * @throws OSSException - an error has occurred
+    * NOTE: Every method accessing parameters has to call this method in order 
+    * to correctly process the replacement variables.
     */
+   @Override
    public Parameter getParam(
       String strName
    ) throws OSSException
    {
-      Parameter temp;
+      Parameter<String> temp;
       
       temp = getParamWithoutVariableResolution(strName);
       
       if (temp != null)
       {
-         List<String> lstValues = temp.getValues();
-         
-         if (lstValues.size() > 1)
-         {
-            throw new OSSConfigException("Parameter " + temp.getName() 
-                                         + " has multiple values but only one is"
-                                         + " supported at this time.");
-         }
-         
          String strOriginalValue;
          
-         strOriginalValue = lstValues.get(0);
+         strOriginalValue = temp.getValue();
 
          if ((strOriginalValue != null) && (!strOriginalValue.isEmpty()))
          {
@@ -169,8 +190,8 @@ public class ConfigurableObject extends OSSObject
             // value before creating the param
             strResolvedValue = replaceVariables(strOriginalValue);
             // We do want to do != since if there is no replacement, the method
-            // returns the same object (memory location) and we do not have to call
-            // equals
+            // returns the same object (memory location) and we do not have to 
+            // call equals
             if ((strOriginalValue != strResolvedValue)
                && (!strOriginalValue.equals(strResolvedValue)))
             {
@@ -189,31 +210,15 @@ public class ConfigurableObject extends OSSObject
    }
 
    /**
-    * Get value of the specified parameter.
-    * 
-    * @param strConfigPrefix - prefix that can be used to modify default 
-    *                          configuration settings, e.g. if prefix is "example"
-    *                          and default value of qs.ProcessingCapacity=10, 
-    *                          one can define example.qs.ProcessingCapacity=20
-    *                          to override this particular value while leaving
-    *                          all the other qs.xxx values intact. The Configuration
-    *                          will first attempt to find value of 
-    *                          strConfigPrefix.strName, if it doesn't find, it 
-    *                          will attempt to find default value for 
-    *                          strConfigPrefix.strName, if it doesn't find it, it
-    *                          will attempt to find value for strName and if it 
-    *                          doesn't find it, it will return default value.
-    * @param strName - name of the configuration parameter to get value for.
-    * @return Param - value or null if it is not defined and it doesn't have 
-    *                 a default value
-    * @throws OSSException - an error has occurred
+    * {@inheritDoc}
     */
+   @Override
    public Parameter getParam(
       String strConfigPrefix,
       String strName
    ) throws OSSException
    {
-      Parameter         temp;
+      Parameter     temp;
       StringBuilder sbPrefixedName = new StringBuilder(strConfigPrefix);
       
       sbPrefixedName.append(".");
@@ -227,20 +232,11 @@ public class ConfigurableObject extends OSSObject
       
       return temp;
    }
-
    
    /**
-    * Get value of the specified parameter without trying to resolve any parameters
-    * the value may contain.
-    * 
-    * @param strName - name of the configuration parameter to get value for. 
-    *                  The Configuration will first attempt to find value of 
-    *                  strName and if it doesn't find it, it will return default 
-    *                  value.
-    * @return Param - value or null if it is not defined and it doesn't have 
-    *                 a default value
-    * @throws OSSException  - an error has occurred
+    * {@inheritDoc}
     */
+   @Override
    public Parameter getParamWithoutVariableResolution(
       String strName
    ) throws OSSException
@@ -249,7 +245,7 @@ public class ConfigurableObject extends OSSObject
       List<String> lstValues = null;
       String       strValue = null;
          
-      temp = m_mpParams.get(strName);
+      temp = m_mpParamsByName.get(strName);
       if (temp != null)
       {
          lstValues = temp.getValues();
@@ -259,7 +255,7 @@ public class ConfigurableObject extends OSSObject
       {
          String strDefaultValue;
          
-         strDefaultValue = m_mpDefaults.get(strName);
+         strDefaultValue = m_mpDefaultValuesByName.get(strName);
          if (strDefaultValue != null)
          {
             // If the value contains any variables, resolve them to an actual
@@ -274,26 +270,9 @@ public class ConfigurableObject extends OSSObject
    }
    
    /**
-    * Get value of the specified parameter without trying to resolve any parameters
-    * the value may contain.
-    * 
-    * @param strConfigPrefix - prefix that can be used to modify default 
-    *                          configuration settings, e.g. if prefix is "example"
-    *                          and default value of qs.ProcessingCapacity=10, 
-    *                          one can define example.qs.ProcessingCapacity=20
-    *                          to override this particular value while leaving
-    *                          all the other qs.xxx values intact. The Configuration
-    *                          will first attempt to find value of 
-    *                          strConfigPrefix.strName, if it doesn't find, it 
-    *                          will attempt to find default value for 
-    *                          strConfigPrefix.strName, if it doesn't find it, it
-    *                          will attempt to find value for strName and if it 
-    *                          doesn't find it, it will return default value.
-    * @param strName - name of the configuration parameter to get value for.
-    * @return Param - value or null if it is not defined and it doesn't have 
-    *                 a default value
-    * @throws OSSException - an error has occurred
+    * {@inheritDoc}
     */
+   @Override
    public Parameter getParamWithoutVariableResolution(
       String strConfigPrefix,
       String strName
@@ -315,50 +294,29 @@ public class ConfigurableObject extends OSSObject
    }
    
    /**
-    * Add setting with corresponding default value to the set of configuration
-    * settings.
-    * 
-    * This method must be final so that we can call it from the constructor.
-    * 
-    * @param strParamName - name of the configuration setting
-    * @param strDefaultValue - default value
+    * {@inheritDoc}
     */
+   @Override
    public final void addDefault(
       String strParamName,
       String strDefaultValue
    )
    {
-      m_mpDefaults.put(strParamName, strDefaultValue);
+      String strOldDefault;
+      
+      strOldDefault = m_mpDefaultValuesByName.put(strParamName, strDefaultValue);
+      if (strOldDefault != null)
+      {
+         s_logger.log(Level.WARNING, "Default value {0} for parameter with name"
+                      + " {1} overwrote already existing default value {2}", 
+                      new Object[]{strDefaultValue, strParamName, strOldDefault});
+      }
    }
    
    /**
     * {@inheritDoc}
     */
    @Override
-   public void toString(
-      StringBuilder sb,
-      int           iIndentIndex
-   )
-   {
-      sb.append(INDENTATION[iIndentIndex]);
-      sb.append("ConfigurableObject{");
-      sb.append(INDENTATION[iIndentIndex + 1]);
-      sb.append("m_mpParams=");
-      append(sb, iIndentIndex + 1, m_mpParams); 
-      sb.append(INDENTATION[iIndentIndex + 1]);
-      sb.append("m_mpDefaults=");
-      append(sb, iIndentIndex + 1, m_mpDefaults); 
-      sb.append(INDENTATION[iIndentIndex]);
-      sb.append("}");
-   }
-   
-   /**
-    * Replace variables for all values in the list.
-    * 
-    * @param lstValues - list of items which can contain some variables
-    * @return List<String> - new list of items with all variables replaced
-    * @throws OSSException - an error has occurred
-    */
    public List<String> replaceVariables(
       List<String> lstValues
    ) throws OSSException
@@ -381,12 +339,9 @@ public class ConfigurableObject extends OSSObject
    }
    
    /**
-    * Replace variables for the specified value.
-    * 
-    * @param strValue - value which may contain variables
-    * @return String - new value with all variables replaced
-    * @throws OSSException - an error has occurred
+    * {@inheritDoc}
     */
+   @Override
    public String replaceVariables(
       String strValue
    ) throws OSSException
@@ -418,16 +373,7 @@ public class ConfigurableObject extends OSSObject
             Parameter<String> replacement = getParamWithoutVariableResolution(
                                                strVariable);
             
-            List<String> lstValues = replacement.getValues();
-
-            if (lstValues.size() > 1)
-            {
-               throw new OSSConfigException("Parameter " + replacement.getName() 
-                                            + " has multiple values but only one is"
-                                            + " supported at this time.");
-            }
-            
-            String strReplacementValue = null;
+            String strReplacementValue = replacement.getValue();
             
             if (replacement.hasAnyValue())
             {
@@ -466,16 +412,16 @@ public class ConfigurableObject extends OSSObject
    protected void inheritAndOverride(
       String             strLogPrefix,
       String             strOverrideName,
-      ConfigurableObject source,
+      ConfigurationImpl source,
       String             strSourceName
    ) throws OSSConfigException
    {
       inheritAndOverride(strLogPrefix, "Parameter Default Values",
-                         m_mpDefaults, strOverrideName,
-                         source.m_mpDefaults, strSourceName);
+                         m_mpDefaultValuesByName, strOverrideName,
+                         source.m_mpDefaultValuesByName, strSourceName);
       inheritAndOverride(strLogPrefix, "Parameters",
-                         m_mpParams, strOverrideName,
-                         source.m_mpParams, strSourceName);
+                         m_mpParamsByName, strOverrideName,
+                         source.m_mpParamsByName, strSourceName);
    }
 
    /**

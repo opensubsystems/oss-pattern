@@ -29,6 +29,7 @@ import org.opensubsystems.core.data.DataObject;
 import org.opensubsystems.core.data.IdentifiableDataObject;
 import org.opensubsystems.core.data.impl.IdentifiableDataObjectImpl;
 import org.opensubsystems.core.error.OSSException;
+import org.opensubsystems.core.error.OSSInconsistentDataException;
 import org.opensubsystems.core.util.HashCodeUtils;
 import org.opensubsystems.pattern.parameter.data.Parameter;
 
@@ -209,6 +210,45 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
       iResult = HashCodeUtils.hash(iResult, super.hashCode());
       
       return iResult;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public T getValue(
+   )  throws OSSInconsistentDataException
+   {
+      T value = null;
+      
+      if (hasMultipleValues())
+      {
+         throw new OSSInconsistentDataException("Parameter " + getName() 
+                      + " has multiple values but only one is requested.");
+      }
+      else
+      {
+         value = getFirstValue();
+      }
+      
+      return value;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public T getFirstValue(
+   )
+   {
+      T value = null;
+      
+      if (hasAnyValue())
+      {
+         value = m_lstValues.get(0);
+      }
+      
+      return value;
    }
 
    /**

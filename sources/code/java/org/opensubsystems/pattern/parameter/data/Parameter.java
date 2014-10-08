@@ -21,6 +21,7 @@ package org.opensubsystems.pattern.parameter.data;
 
 import java.util.List;
 import org.opensubsystems.core.data.IdentifiableDataObject;
+import org.opensubsystems.core.error.OSSInconsistentDataException;
 
 /**
  * Interface representing single parameter that can be used to further 
@@ -37,6 +38,24 @@ public interface Parameter<T> extends IdentifiableDataObject
     *                   Can be null if there are no values.
     */
    List<T> getValues();
+
+   /**
+    * Get first value from the list of values of the parameter.
+    * 
+    * @return T - first value from one or multiple values of the parameter or 
+    *             null if the parameter has no values.
+    */
+   T getFirstValue(
+   );
+   
+   /**
+    * Get value of the parameter if the parameter has single value.
+    * 
+    * @return T - value of the parameter or null if the parameter has no values.
+    * @throws OSSInconsistentDataException - parameter has more than one value
+    */
+   T getValue(
+   )  throws OSSInconsistentDataException;
 
    /**
     * Set values of the parameter.

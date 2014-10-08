@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
 
-package org.opensubsystems.pattern.configuration.util;
+package org.opensubsystems.pattern.parameter.util;
 
 import org.apache.commons.digester3.binder.AbstractRulesModule;
-import org.opensubsystems.pattern.configuration.data.ConfigurableObject;
+import org.opensubsystems.pattern.parameter.data.impl.ConfigurationImpl;
 import org.opensubsystems.pattern.parameter.data.Parameter;
 
 /**
@@ -38,7 +38,7 @@ public class ConfigurationRulesModule extends AbstractRulesModule
    protected void configure()
    {
       
-      forPattern("config").createObject().ofType(ConfigurableObject.class);
+      forPattern("config").createObject().ofType(ConfigurationImpl.class);
 
       // Parameters ////////////////////////////////////////////////////////////
       forPattern("config/param").createObject().ofType(Parameter.class)

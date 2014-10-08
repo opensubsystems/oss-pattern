@@ -21,6 +21,7 @@ package org.opensubsystems.pattern.parameter.data.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import org.opensubsystems.core.error.OSSException;
 import org.opensubsystems.core.util.DataObjectUtils;
@@ -39,8 +40,8 @@ import org.opensubsystems.pattern.parameter.data.ParametrizedObject;
  * 
  * @author bastafidli
  */
-public class ParametrizedObjectImpl extends OSSObject
-                                       implements ParametrizedObject
+public class ParametrizedObjectImpl extends    OSSObject
+                                    implements ParametrizedObject
 {
     // Attributes //////////////////////////////////////////////////////////////
     
@@ -50,6 +51,15 @@ public class ParametrizedObjectImpl extends OSSObject
     protected Map<String, Parameter> m_mpParamsByName;
     
     // Constructors ////////////////////////////////////////////////////////////
+    
+   /**
+    * Simple constructor creating new object 
+    */
+   public ParametrizedObjectImpl(
+   )
+   {
+      m_mpParamsByName = new HashMap<>();
+   }
     
    /**
     * Simple constructor creating new object 
