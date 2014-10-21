@@ -21,7 +21,7 @@ package org.opensubsystems.pattern.parameter.util;
 
 import org.apache.commons.digester3.binder.AbstractRulesModule;
 import org.opensubsystems.pattern.parameter.data.impl.ConfigurationImpl;
-import org.opensubsystems.pattern.parameter.data.Parameter;
+import org.opensubsystems.pattern.parameter.data.impl.ParameterImpl;
 
 /**
  * The common-digester description of XML format describing a configuration 
@@ -41,7 +41,7 @@ public class ConfigurationRulesModule extends AbstractRulesModule
       forPattern("config").createObject().ofType(ConfigurationImpl.class);
 
       // Parameters ////////////////////////////////////////////////////////////
-      forPattern("config/param").createObject().ofType(Parameter.class)
+      forPattern("config/param").createObject().ofType(ParameterImpl.class)
          .then().setNext("addParam");
       forPattern("config/param/name").setBeanProperty();
       forPattern("config/param/value").setBeanProperty();

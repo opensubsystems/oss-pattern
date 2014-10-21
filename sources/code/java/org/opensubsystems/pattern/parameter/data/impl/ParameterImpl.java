@@ -51,6 +51,18 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
     // Constructors ////////////////////////////////////////////////////////////
     
    /**
+    * Default parameterless constructor needed by commons digester.
+    * 
+    * @throws OSSException - an error has occurred
+    */
+   public ParameterImpl(
+   ) throws OSSException
+   {
+      this(DataDescriptor.NO_DATA_DESCRIPTOR_CLASS, DataObject.NEW_ID, 
+           null, null, Collections.EMPTY_LIST);
+   }
+   
+   /**
     * Simple constructor creating new data object in particular domain.
     * 
     * @param clsDataDescriptor - class identifying data descriptor for the object
@@ -61,11 +73,11 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
     * @throws OSSException - an error has occurred
     */
    public ParameterImpl(
-      Class<DataDescriptor> clsDataDescriptor,
-      long                  lDomainId,
-      String                strName,
-      String                strDescription,
-      List<T>               lstValues
+      Class<? extends DataDescriptor> clsDataDescriptor,
+      long                            lDomainId,
+      String                          strName,
+      String                          strDescription,
+      List<T>                         lstValues
    ) throws OSSException
    {
       this(DataObject.NEW_ID, clsDataDescriptor, lDomainId, null, null, strName, 
@@ -83,11 +95,11 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
     * @throws OSSException - an error has occurred
     */
    public ParameterImpl(
-      Class<DataDescriptor> clsDataDescriptor,
-      long                  lDomainId,
-      String                strName,
-      String                strDescription,
-      T                     value
+      Class<? extends DataDescriptor> clsDataDescriptor,
+      long                            lDomainId,
+      String                          strName,
+      String                          strDescription,
+      T                               value
    ) throws OSSException
    {
       this(DataObject.NEW_ID, clsDataDescriptor, lDomainId, null, null, strName, 
@@ -110,7 +122,7 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
     */
    public ParameterImpl(
       long                  lId,
-      Class<DataDescriptor> clsDataDescriptor,
+      Class<? extends DataDescriptor> clsDataDescriptor,
       long                  lDomainId,
       Timestamp             creationTimestamp, 
       Timestamp             modificationTimestamp,
@@ -141,7 +153,7 @@ public class ParameterImpl<T> extends IdentifiableDataObjectImpl
     */
    public ParameterImpl(
       long                  lId,
-      Class<DataDescriptor> clsDataDescriptor,
+      Class<? extends DataDescriptor> clsDataDescriptor,
       long                  lDomainId,
       Timestamp             creationTimestamp, 
       Timestamp             modificationTimestamp,

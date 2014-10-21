@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 OpenSubsystems.com/net/org and its owners. All rights reserved.
+ * Copyright (C) 2013 - 2014 OpenSubsystems.com/net/org and its owners. All rights reserved.
  * 
  * This file is part of OpenSubsystems.
  *
@@ -67,7 +67,7 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     * @throws OSSException - an error has occurred
     */
    public ParametrizedIdentifiableDataObjectImpl(
-      Class<DataDescriptor> clsDataDescriptor,
+      Class<? extends DataDescriptor> clsDataDescriptor,
       long                  lDomainId,
       String                strName,
       String                strDescription,
@@ -94,7 +94,7 @@ public class ParametrizedIdentifiableDataObjectImpl extends IdentifiableDataObje
     */
    public ParametrizedIdentifiableDataObjectImpl(
       long                  lId,
-      Class<DataDescriptor> clsDataDescriptor,
+      Class<? extends DataDescriptor> clsDataDescriptor,
       long                  lDomainId,
       Timestamp             creationTimestamp, 
       Timestamp             modificationTimestamp,
