@@ -407,14 +407,14 @@ public class ConfigurationImpl extends    ParametrizedObjectImpl
       *                        the overrides
     * @param source - source object from which to inherit and override elements
     * @param strSourceName - name of object that contains the sources
-    * @throws OSSConfigException - an error has occurred
+    * @throws OSSException - an error has occurred
     */
    protected void inheritAndOverride(
       String             strLogPrefix,
       String             strOverrideName,
       ConfigurationImpl source,
       String             strSourceName
-   ) throws OSSConfigException
+   ) throws OSSException
    {
       inheritAndOverride(strLogPrefix, "Parameter Default Values",
                          m_mpDefaultValuesByName, strOverrideName,
