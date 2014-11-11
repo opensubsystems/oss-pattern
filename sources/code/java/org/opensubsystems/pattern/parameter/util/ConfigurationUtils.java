@@ -17,7 +17,7 @@ import org.opensubsystems.pattern.parameter.data.Parameter;
 /**
  * Utility methods for working with configuration objects.
  * 
- * @author miro
+ * @author bastafidli
  */
 public class ConfigurationUtils
 {
