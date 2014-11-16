@@ -70,8 +70,8 @@ public class ConfigurationUtils
          }
          catch (NumberFormatException nfeExc)
          {
-            s_logger.log(Level.SEVERE, "Cannot parse property " + strName + " with value " 
-                           + StringUtils.valueIfNotNull(temp.getValue()));
+            s_logger.log(Level.SEVERE, "Cannot parse property {0} with value {1}", 
+                         new Object[]{strName, StringUtils.valueIfNotNull(temp.getValue())});
          }
       }
       
@@ -116,10 +116,9 @@ public class ConfigurationUtils
          }
          catch (NumberFormatException nfeExc)
          {
-            s_logger.log(Level.SEVERE, "Cannot parse property " + strName 
-                            + " with prefix " + strConfigPrefix
-                            + " and with value " 
-                            + StringUtils.valueIfNotNull(temp.getValue()));
+            s_logger.log(Level.SEVERE, "Cannot parse property {0} with prefix {1}"
+                         + " and with value {2}", new Object[]{strName, 
+                         strConfigPrefix, StringUtils.valueIfNotNull(temp.getValue())});
          }
       }
       
@@ -220,8 +219,8 @@ public class ConfigurationUtils
          }
          catch (NumberFormatException nfeExc)
          {
-            s_logger.log(Level.SEVERE, "Cannot parse property " + strName + " with value " 
-                           + StringUtils.valueIfNotNull(temp.getValue()));
+            s_logger.log(Level.SEVERE, "Cannot parse property {0} with value {1}", 
+                         new Object[]{strName, StringUtils.valueIfNotNull(temp.getValue())});
          }
       }
       
@@ -266,10 +265,9 @@ public class ConfigurationUtils
          }
          catch (NumberFormatException nfeExc)
          {
-            s_logger.log(Level.SEVERE, "Cannot parse property " + strName 
-                            + " with prefix " + strConfigPrefix
-                            + " and with value " 
-                            + StringUtils.valueIfNotNull(temp.getValue()));
+            s_logger.log(Level.SEVERE, "Cannot parse property {0} with prefix {1}"
+                         + " and with value {2}", new Object[]{strName, 
+                         strConfigPrefix, StringUtils.valueIfNotNull(temp.getValue())});
          }
       }
       
