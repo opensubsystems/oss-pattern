@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 - 2012 OpenSubsystems.com/net/org and its owners. All rights reserved.
+ * Copyright (C) 2003 - 2015 OpenSubsystems.com/net/org and its owners. All rights reserved.
  * 
  * This file is part of OpenSubsystems.
  *
@@ -19,13 +19,14 @@
 
 package org.opensubsystems.pattern.datalist.data;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.opensubsystems.core.data.DataDescriptor;
 
 import org.opensubsystems.core.data.impl.DataDescriptorImpl;
+import org.opensubsystems.core.error.OSSException;
 
 /**
  * Collection of metadata elements that describe or define behavior of data 
@@ -38,21 +39,15 @@ import org.opensubsystems.core.data.impl.DataDescriptorImpl;
  *   filterable attributes, attributes to display in list
  * - constants identifying default values of attributes 
  *
+ * @param <E> - enumeration representing fields of the described data
  * @author bastafidli
  */
-public class ListDataDescriptor extends DataDescriptorImpl
+public class ListDataDescriptor<E extends Enum<E>>  extends DataDescriptorImpl<E>
 {
    // Constants ////////////////////////////////////////////////////////////////
    
    // Attributes ///////////////////////////////////////////////////////////////
 
-   /**
-    * Array of unique codes of all attributes of the data object described by 
-    * this data descriptor. Each attribute should have assigned unique code that 
-    * can be used to identify that attribute.
-    */
-   protected int[] m_arrAllColumnCodes;
-   
    /**
     * Array of default attributes to show to user for each data object when 
     * they are displayed in the list. Each attribute should have assigned unique 
@@ -116,11 +111,7 @@ public class ListDataDescriptor extends DataDescriptorImpl
     *                              objects can be displayed in multiple various 
     *                              ways called views. This constant identifies \
     *                              the default one.
-    * @param arrAllColumnCodes - Array of unique codes of all attributes of the 
-    *                            data object described by this data descriptor. 
-    *                            Each attribute should have assigned unique code 
-    *                            that can be used to identify that 
-    *                            attribute.
+	 * @param setDataFields - enumeration representing data fields for the class
     * @param arrDefaultListDisplayColumnCodes - Array of default attributes to 
     *                                           show to user for each data object 
     *                                           when they are displayed in the 
@@ -150,26 +141,21 @@ public class ListDataDescriptor extends DataDescriptorImpl
     *                               available to be displayed in the list. 
     *                               Elements are ColumnDefinition objects 
     *                               describing the columns to display in the list.
+	 * @throws OSSException - an error has occurred
     */
    public ListDataDescriptor(
       int                        iDesiredDataType,
       String                     strDataTypeName,
       String                     strDataTypeViewName,
-      int[]                      arrAllColumnCodes,
+		EnumSet<E>                 setDataFields,
       int[]                      arrDefaultListDisplayColumnCodes,
       int[]                      arrDefaultListOrderColumnCodes,
       String[]                   arrDefaultListOrderDirections,
       int[]                      arrFilterableColumnCodes,
       List<ListColumnDefinition> lstColumnDefinitions
-   )
+   ) throws OSSException
    {
-      super(iDesiredDataType, strDataTypeName, strDataTypeViewName);
-      
-      m_arrAllColumnCodes = arrAllColumnCodes;
-      // Sort the columns so that we can search them efficiently
-      // Most likely the columns are already sorted since thats how they are
-      // usually defined so this shouldn't hurt anything
-      Arrays.sort(m_arrAllColumnCodes);
+      super(iDesiredDataType, strDataTypeName, strDataTypeViewName, setDataFields);
       
       m_arrDefaultListDisplayColumnCodes = arrDefaultListDisplayColumnCodes;
       m_arrDefaultListOrderColumnCodes = arrDefaultListOrderColumnCodes;
@@ -192,11 +178,7 @@ public class ListDataDescriptor extends DataDescriptorImpl
     *                              objects can be displayed in multiple various 
     *                              ways called views. This constant identifies \
     *                              the default one.
-    * @param arrAllColumnCodes - Array of unique codes of all attributes of the 
-    *                            data object described by this data descriptor. 
-    *                            Each attribute should have assigned unique code 
-    *                            that can be used to identify that 
-    *                            attribute.
+	 * @param setDataFields - enumeration representing data fields for the class
     * @param arrDefaultListDisplayColumnCodes - Array of default attributes to 
     *                                           show to user for each data object 
     *                                           when they are displayed in the 
@@ -226,22 +208,22 @@ public class ListDataDescriptor extends DataDescriptorImpl
     *                               available to be displayed in the list. 
     *                               Elements are ColumnDefinition objects 
     *                               describing the columns to display in the list.
+	 * @throws OSSException - an error has occurred
     */
    public ListDataDescriptor(
       Class<DataDescriptor>      clsParentDescriptor,
       String                     strDataTypeName,
       String                     strDataTypeViewName,
-      int[]                      arrAllColumnCodes,
+		EnumSet<E>                 setDataFields,
       int[]                      arrDefaultListDisplayColumnCodes,
       int[]                      arrDefaultListOrderColumnCodes,
       String[]                   arrDefaultListOrderDirections,
       int[]                      arrFilterableColumnCodes,
       List<ListColumnDefinition> lstColumnDefinitions
-   )
+   ) throws OSSException
    {
-      super(clsParentDescriptor, strDataTypeName, strDataTypeViewName);
+      super(clsParentDescriptor, strDataTypeName, strDataTypeViewName, setDataFields);
       
-      m_arrAllColumnCodes = arrAllColumnCodes;
       m_arrDefaultListDisplayColumnCodes = arrDefaultListDisplayColumnCodes;
       m_arrDefaultListOrderColumnCodes = arrDefaultListOrderColumnCodes;
       m_arrDefaultListOrderDirections = arrDefaultListOrderDirections;
@@ -250,19 +232,6 @@ public class ListDataDescriptor extends DataDescriptorImpl
    }
    
    // Logic ////////////////////////////////////////////////////////////////////
-
-
-   /**
-    * Get array of unique codes of all attributes of the data object described 
-    * by this data descriptor. Each attribute should have assigned unique code 
-    * that can be used to identify that attribute.
-    * 
-    * @return the allColumnCodes
-    */
-   public int[] getAllColumnCodes()
-   {
-      return m_arrAllColumnCodes;
-   }
 
    /**
     * Get the array of default attributes to show to user for each data object 
@@ -348,20 +317,5 @@ public class ListDataDescriptor extends DataDescriptorImpl
          m_mpColumnDefinitions = mpColumnDefinitions;
       }
       return m_mpColumnDefinitions;
-   }
-   
-   /**
-    * Test if data descriptor contains this column in the list of all columns.
-    * 
-    * @param iColumnCode - column code to search for 
-    * @return boolean - true if the 
-    */
-   public boolean containsColumn(
-      int iColumnCode
-   )
-   {
-      // This functionality takes advantage of the sort we have done in the 
-      // constructor
-      return (Arrays.binarySearch(m_arrAllColumnCodes, iColumnCode) >= 0);
    }
 }
